@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: TheDeagle <castlehaitham@gmail.com>        +#+  +:+       +#+        */
+/*   By: hben-bou <hben-bou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 08:16:24 by TheDeagle         #+#    #+#             */
-/*   Updated: 2023/12/22 08:36:01 by TheDeagle        ###   ########.fr       */
+/*   Updated: 2023/12/22 22:41:09 by hben-bou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,15 @@ int main(void)
     int Socket_fd;
     struct sockaddr_in Server_addr;
     socklen_t length = sizeof(Server_addr);
-    Socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+    Socket_fd = socket(PF_INET, SOCK_STREAM, 0);
     if (Socket_fd == -1)
     {
         perror("ERROR: COULD'T CREAT A CLIENT SOCKET\n");
         exit(1);
     }
     printf("Client socket craeted successfuly\n");
-    Server_addr.sin_family = AF_INET;
-    Server_addr.sin_port = htons(666);
+    Server_addr.sin_family = PF_INET;
+    Server_addr.sin_port = htons(9898);
     Server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
     if (connect(Socket_fd, (struct sockaddr*)&Server_addr, length) == -1)
     {
@@ -42,15 +42,13 @@ int main(void)
     printf("Connected to the server successfuly\n");
     while (1)
     {
-        char *BUFFER = malloc(INT_MAX);
+        char BUFFER[2048];
         int length = read(0, BUFFER, sizeof(BUFFER));
         BUFFER[length] = '\0';
         send(Socket_fd, BUFFER, sizeof(BUFFER), 0);
-        free(BUFFER);
-        char *BUFFER2 = malloc(INT_MAX);
+        char BUFFER2[2048];
         recv(Socket_fd, BUFFER2, sizeof(BUFFER2), 0);
-        printf("%s", BUFFER2);
-        free(BUFFER2);
+        write(1, BUFFER2, strlen(BUFFER2));
     }
     close(Socket_fd);
 }
